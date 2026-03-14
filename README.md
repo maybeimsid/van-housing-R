@@ -66,4 +66,4 @@ This will launch the dashboard locally in your browser.
 
 You can view the deployed dashboard here:
 
-[Live Dashboard Link](PASTE_YOUR_POSIT_CONNECT_LINK_HERE)
+[Live Dashboard Link](https://019cea87-7a08-fb64-6b12-39c183645adf.share.connect.posit.cloud/)
