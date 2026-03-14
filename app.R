@@ -33,6 +33,15 @@ data$`Total Units` <- data$`Clientele - Families` +
   data$`Clientele - Seniors` +
   data$`Clientele - Other`
 
+# ---- ADD BEDROOM AVAILABILITY COLUMNS ----
+room_types <- c("1BR","2BR","3BR","4BR","Studio")
+
+for(br in room_types){
+  data[[paste0(br," Available")]] <- as.integer(
+    rowSums(data[grep(br, colnames(data))], na.rm=TRUE) > 0
+  )
+}
+
 # ---- UI ----
 ui <- page_sidebar(
   
@@ -115,6 +124,13 @@ server <- function(input, output, session){
         filter(Clientele %in% input$clientele)
     }
     
+    # ---- BEDROOM FILTER ----
+    if(length(input$br) > 0){
+      br_cols <- paste0(input$br, " Available")
+      df <- df |>
+        filter(rowSums(across(all_of(br_cols))) > 0)
+    }
+    
     df <- df |>
       filter(`Occupancy Year` >= input$year[1],
              `Occupancy Year` <= input$year[2])
@@ -134,12 +150,14 @@ server <- function(input, output, session){
   },
   options = list(
     dom = "t",
-    pageLength = 10
+    pageLength = 10,
+    paging = FALSE
   ),
   rownames = FALSE)
   
   observeEvent(input$reset,{
     updateCheckboxGroupInput(session,"clientele",selected=character(0))
+    updateSelectizeInput(session,"br",selected=character(0))
     updateSliderInput(session,"year",value=c(1971,2025))
   })
 }
